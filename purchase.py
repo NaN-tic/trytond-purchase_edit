@@ -159,8 +159,8 @@ class Purchase:
             cls.save(cache_to_update)
             cls.store_cache(cache_to_update)
 
-    def _get_shipment_sale(self, Shipment, key):
-        # return sale shipment to continue picking or create new shipment
+    def _get_shipment_purchase(self, Shipment, key):
+        # return purchase shipment to continue picking or create new shipment
         if Shipment.__name__ == 'stock.shipment.in':
             shipments = self.shipments
             if shipments and len(shipments) == 1:
@@ -181,7 +181,7 @@ class Purchase:
                         drafts = False
                 if drafts:
                     return shipment
-        return super(Purchase, self)._get_shipment_sale(Shipment, key)
+        return super(Purchase, self)._get_shipment_purchase(Shipment, key)
 
 
 class PurchaseLine:
@@ -222,7 +222,7 @@ class PurchaseLine:
                 continue
             purchase.check_edit_invoice_method()
 
-        # check sale lines
+        # check purchase lines
         shipments = set()
         for line in lines:
             if not line.check_line_to_update(fields):
