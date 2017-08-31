@@ -105,8 +105,13 @@ class Purchase:
                             cls.raise_user_error('invalid_delete_line',
                                 (purchase.rec_name,))
 
+                has_invoice_lines = False
+                for line in purchase.lines:
+                    if line.invoice_lines:
+                        has_invoice_lines = True
+
                 for v in values:
-                    if v in cls._check_modify_exclude and purchase.invoices:
+                    if v in cls._check_modify_exclude and has_invoice_lines:
                         cls.raise_user_error('invalid_edit_fields_method',
                             {'field': v, 'purchase': purchase.rec_name})
 
