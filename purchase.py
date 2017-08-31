@@ -49,7 +49,7 @@ class Purchase:
                     'because purchase partially shipped.'),
                 'invalid_edit_move': ('Can not edit move "%s" '
                         'that state is not draft.'),
-                'invalid_delete_line': ('Can not delete a line "%s"'),
+                'invalid_delete_line': ('Can not delete line "%s".'),
                 })
 
     def get_shipment_moves(self, name):
