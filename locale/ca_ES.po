@@ -1,0 +1,41 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:purchase.line:"
+msgid "Can not edit \"%s\" field."
+msgstr "No es pot editar el camp \"%s\"."
+
+msgctxt "error:purchase.line:"
+msgid "Can not edit line \"%s\" that has more than one move."
+msgstr "No es pot editar la línia \"%s\" ja que te més d'un moviment."
+
+msgctxt "error:purchase.line:"
+msgid "Can not edit move \"%s\" that state is not draft."
+msgstr "No es pot editar el moviment \"%s\" ja que l'estat no és borredor."
+
+msgctxt "error:purchase.purchase:"
+msgid "Can not delete line \"%s\"."
+msgstr "No es pot esborrar la línia \"%s\"."
+
+msgctxt "error:purchase.purchase:"
+msgid ""
+"Can not edit field \"%(field)s\" of purchase \"%(purchase)s\" because "
+"purchase already invoiced."
+msgstr ""
+"No es pot editar el camp \"%(field)s\" de la compra \"$(purchase)s\" perque "
+"la compra ja s'ha facturat."
+
+msgctxt "error:purchase.purchase:"
+msgid "Can not edit move \"%s\" that state is not draft."
+msgstr "No es pot editar el moviment \"%s\" ja que l'estat no és borrador."
+
+msgctxt "error:purchase.purchase:"
+msgid "Can not edit purchase \"%s\" because purchase partially shipped."
+msgstr ""
+"No es pot editar la compra \"%s\" perque la compra esta percialment enviada."
+" "
+
+msgctxt "field:purchase.purchase,shipment_moves:"
+msgid "Moves"
+msgstr "Moviments"
