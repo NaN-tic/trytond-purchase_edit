@@ -43,8 +43,9 @@ class Purchase:
         cls._error_messages.update({
                 'invalid_edit_method': ('Can not edit purchase "%s" '
                     'that invoicing method is not on shipment sent.'),
-                'invalid_edit_fields_method': ('Can not edit purchase "%s" '
-                    'and field %s because purchase already invoiced.'),
+                'invalid_edit_fields_method': ('Can not edit field "%(field)s" '
+                    'of purchase "%(purchase)s" because purchase already '
+                    'invoiced.'),
                 'invalid_edit_shipments_method': ('Can not edit purchase "%s" '
                     'because purchase partially shipped.'),
                 'invalid_edit_move': ('Can not edit move "%s" '
@@ -127,7 +128,7 @@ class Purchase:
                 for v in values:
                     if v in cls._check_modify_exclude and purchase.invoices:
                         cls.raise_user_error('invalid_edit_fields_method',
-                            (purchase.rec_name, v))
+                            {'field': v, 'purchase': purchase.rec_name})
 
 
         super(Purchase, cls).write(*args)
