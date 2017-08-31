@@ -3,7 +3,7 @@
 import unittest
 # import doctest
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import test_view, test_depends
+from trytond.tests.test_tryton import test_depends
 # TODO: Remove if no sceneario needed.
 # from trytond.tests.test_tryton import doctest_setup, doctest_teardown
 
@@ -13,10 +13,6 @@ class TestCase(unittest.TestCase):
 
     def setUp(self):
         trytond.tests.test_tryton.install_module('purchase_edit')
-
-    def test0005views(self):
-        'Test views'
-        test_view('purchase_edit')
 
     def test0006depends(self):
         'Test depends'
