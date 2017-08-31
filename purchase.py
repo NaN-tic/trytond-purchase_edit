@@ -93,11 +93,7 @@ class Purchase:
 
     @classmethod
     def write(cls, *args):
-        pool = Pool()
-        ShipmentIn = pool.get('stock.shipment.in')
-
         actions = iter(args)
-        shipment_to_write = []
         purchases_to_process = []
         cache_to_update = []
 
@@ -133,20 +129,8 @@ class Purchase:
                         cls.raise_user_error('invalid_edit_fields_method',
                             (purchase.rec_name, v))
 
-                vals = {}
-                for field in cls._check_modify_exclude_shipment:
-                    m = cls._check_modify_exclude_shipment
-                    if values.get(field):
-                        vals[m[field]] = values.get(field)
-
-                if vals:
-                    for shipment in purchase.shipments:
-                        shipment_to_write.extend(([shipment], vals))
 
         super(Purchase, cls).write(*args)
-
-        if shipment_to_write:
-            ShipmentIn.write(*shipment_to_write)
 
         if purchases_to_process:
             cls.process(purchases_to_process)
