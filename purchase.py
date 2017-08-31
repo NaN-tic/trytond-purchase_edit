@@ -140,7 +140,7 @@ class Purchase:
                 purchase.untaxed_amount_cache = None
                 purchase.tax_amount_cache = None
                 purchase.total_amount_cache = None
-            cls.save(cache_to_update)
+                purchase.save()
             cls.store_cache(cache_to_update)
 
     def _get_shipment_purchase(self, Shipment, key):
