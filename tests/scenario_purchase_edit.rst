@@ -267,8 +267,67 @@ Validate a Shipment::
 
 Try to edit the purchase::
 
-    >>> purchase.lines[0].quantity = 2.0
+    >>> config.user = purchase_user.id
+    >>> purchase.description = 'Comment'
     >>> purchase.save()
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'Can not edit move "1.0u product" that state is not draft.', ''))
+    UserError: ('UserError', (u'Can not edit field "description" of purchase "2" because purchase already invoiced.', ''))
+
+Purchase 5 products with an invoice method 'manual'::
+
+    >>> purchase = Purchase()
+    >>> purchase.party = supplier
+    >>> purchase.payment_term = payment_term
+    >>> purchase.invoice_method = 'manual'
+    >>> purchase_line = PurchaseLine()
+    >>> purchase.lines.append(purchase_line)
+    >>> purchase_line.product = product
+    >>> purchase_line.quantity = 2.0
+    >>> purchase_line = PurchaseLine()
+    >>> purchase.lines.append(purchase_line)
+    >>> purchase_line.type = 'comment'
+    >>> purchase_line.description = 'Comment'
+    >>> purchase_line = PurchaseLine()
+    >>> purchase.lines.append(purchase_line)
+    >>> purchase_line.product = product
+    >>> purchase_line.quantity = 3.0
+    >>> purchase.click('quote')
+    >>> purchase.click('confirm')
+    >>> purchase.click('process')
+    >>> len(purchase.moves), len(purchase.shipment_returns), len(purchase.invoices)
+    (2, 0, 0)
+
+Edit the purchase with an invoice method 'manual'::
+
+    >>> purchase.lines[0].quantity = 1.0
+    >>> purchase.save()
+    >>> purchase.moves[0].quantity == 1.0
+    True
+
+Validate a Shipment::
+
+    >>> config.user = stock_user.id
+    >>> Move = Model.get('stock.move')
+    >>> ShipmentIn = Model.get('stock.shipment.in')
+    >>> shipment = ShipmentIn()
+    >>> shipment.supplier = supplier
+    >>> incoming_move = Move(id=purchase.moves[0].id)
+    >>> shipment.incoming_moves.append(incoming_move)
+    >>> shipment.save()
+    >>> shipment.origins == purchase.rec_name
+    True
+    >>> ShipmentIn.receive([shipment.id], config.context)
+    >>> ShipmentIn.done([shipment.id], config.context)
+    >>> purchase.reload()
+    >>> len(purchase.shipments), len(purchase.shipment_returns)
+    (1, 0)
+
+Try to edit the purchase::
+
+    >>> config.user = purchase_user.id
+    >>> purchase.description = 'Comment'
+    >>> purchase.save()
+    Traceback (most recent call last):
+        ...
+    UserError: ('UserError', (u'Can not edit field "description" of purchase "3" because purchase already shipped.', ''))
