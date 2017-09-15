@@ -44,8 +44,9 @@ class Purchase:
                 'invalid_edit_fields_method': ('Can not edit field "%(field)s" '
                     'of purchase "%(purchase)s" because purchase already '
                     'invoiced.'),
-                'invalid_edit_shipments_method': ('Can not edit purchase "%s" '
-                    'because purchase partially shipped.'),
+                'invalid_edit_fields_shipped': ('Can not edit field "%(field)s"'
+                    ' of purchase "%(purchase)s" because purchase already '
+                    'shipped.'),
                 'invalid_edit_move': ('Can not edit move "%s" '
                         'that state is not draft.'),
                 'invalid_delete_line': ('Can not delete line "%s".'),
@@ -83,13 +84,21 @@ class Purchase:
                 if not purchase.check_edit_state_method:
                     continue
 
+                has_invoice_lines = False
+                for line in purchase.lines:
+                    if line.invoice_lines:
+                        has_invoice_lines = True
+
+                for v in values:
+                    if v in cls._check_modify_exclude:
+                        if has_invoice_lines:
+                            cls.raise_user_error('invalid_edit_fields_method',
+                                {'field': v, 'purchase': purchase.rec_name})
+                        if purchase.shipments or purchase.shipment_returns:
+                            cls.raise_user_error('invalid_edit_fields_shipped',
+                                {'field': v, 'purchase': purchase.rec_name})
+
                 if 'lines' in values:
-                    if len(purchase.shipments) > 1:
-                        cls.raise_user_error('invalid_edit_shipments_method',
-                            (purchase.rec_name,))
-                    if len(purchase.shipment_returns) > 1:
-                        cls.raise_user_error('invalid_edit_shipments_method',
-                            (purchase.rec_name,))
 
                     cache_to_update.append(purchase)
 
@@ -104,17 +113,6 @@ class Purchase:
                         if 'delete' == v[0]:
                             cls.raise_user_error('invalid_delete_line',
                                 (purchase.rec_name,))
-
-                has_invoice_lines = False
-                for line in purchase.lines:
-                    if line.invoice_lines:
-                        has_invoice_lines = True
-
-                for v in values:
-                    if v in cls._check_modify_exclude and has_invoice_lines:
-                        cls.raise_user_error('invalid_edit_fields_method',
-                            {'field': v, 'purchase': purchase.rec_name})
-
 
         super(Purchase, cls).write(*args)
 
