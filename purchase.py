@@ -41,8 +41,6 @@ class Purchase:
         cls.lines.depends.append('shipment_state')
 
         cls._error_messages.update({
-                'invalid_edit_method': ('Can not edit purchase "%s" '
-                    'that invoicing method is not on shipment sent.'),
                 'invalid_edit_fields_method': ('Can not edit field "%(field)s" '
                     'of purchase "%(purchase)s" because purchase already '
                     'invoiced.'),
@@ -73,24 +71,6 @@ class Purchase:
         Check edit state method.
         '''
         return self.state == 'processing'
-
-    def check_edit_invoice_method(self):
-        '''
-        Check edit invoice method.
-        '''
-        if ((self.check_edit_state_method and
-                (self.invoice_method != 'shipment')) and
-                len(self.shipments) > 1):
-            self.raise_user_error('invalid_edit_method', (self.rec_name,))
-
-    @classmethod
-    def validate(cls, purchases):
-        super(Purchase, cls).validate(purchases)
-
-        for purchase in purchases:
-            if not purchase.check_edit_state_method:
-                continue
-            purchase.check_edit_invoice_method()
 
     @classmethod
     def write(cls, *args):
@@ -199,14 +179,6 @@ class PurchaseLine:
 
     @classmethod
     def check_editable(cls, lines, fields):
-        purchases = set(x.purchase for x in lines if x.purchase)
-
-        # check purchase
-        for purchase in purchases:
-            if not purchase.check_edit_state_method:
-                continue
-            purchase.check_edit_invoice_method()
-
         # check purchase lines
         shipments = set()
         for line in lines:
