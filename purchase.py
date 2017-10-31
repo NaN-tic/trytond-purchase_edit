@@ -71,7 +71,7 @@ class Purchase:
         '''
         Check edit state method.
         '''
-        return self.state == 'processing'
+        return self.state in ('confirmed', 'processing')
 
     @classmethod
     def write(cls, *args):
@@ -99,7 +99,6 @@ class Purchase:
                                 {'field': v, 'purchase': purchase.rec_name})
 
                 if 'lines' in values:
-
                     cache_to_update.append(purchase)
 
                     for move in purchase.shipment_moves:
