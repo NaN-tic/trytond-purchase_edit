@@ -21,14 +21,14 @@ Install product_cost_plan Module::
     >>> config = activate_modules('purchase_edit')
 
 
-  Create company::
+Create company::
 
-      >>> _ = create_company()
-      >>> company = get_company()
-      >>> tax_identifier = company.party.identifiers.new()
-      >>> tax_identifier.type = 'eu_vat'
-      >>> tax_identifier.code = 'BE0897290877'
-      >>> company.party.save()
+    >>> _ = create_company()
+    >>> company = get_company()
+    >>> tax_identifier = company.party.identifiers.new()
+    >>> tax_identifier.type = 'eu_vat'
+    >>> tax_identifier.code = 'BE0897290877'
+    >>> company.party.save()
 
 
 Reload the context::
@@ -59,15 +59,15 @@ Create stock user::
     >>> stock_user.groups.append(stock_group)
     >>> stock_user.save()
 
-  Create chart of accounts::
+Create chart of accounts::
 
-      >>> _ = create_chart(company)
-      >>> accounts = get_accounts(company)
-      >>> receivable = accounts['receivable']
-      >>> revenue = accounts['revenue']
-      >>> expense = accounts['expense']
-      >>> account_tax = accounts['tax']
-      >>> account_cash = accounts['cash']
+    >>> _ = create_chart(company)
+    >>> accounts = get_accounts(company)
+    >>> receivable = accounts['receivable']
+    >>> revenue = accounts['revenue']
+    >>> expense = accounts['expense']
+    >>> account_tax = accounts['tax']
+    >>> account_cash = accounts['cash']
 
 Create supplier party::
 
