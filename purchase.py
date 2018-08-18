@@ -12,8 +12,7 @@ _STATES_EDIT = ~Eval('state').in_(['draft', 'quotation', 'confirmed',
 _STATES_EDIT_LINE = ~Eval('_parent_purchase', {}).get('state').in_(['draft'])
 
 
-class Purchase:
-    __metaclass__ = PoolMeta
+class Purchase(metaclass=PoolMeta):
     __name__ = 'purchase.purchase'
     shipment_moves = fields.Function(fields.One2Many('stock.move', None,
         'Moves'), 'get_shipment_moves')
@@ -151,8 +150,7 @@ class Purchase:
         return super(Purchase, self)._get_shipment_purchase(Shipment, key)
 
 
-class PurchaseLine:
-    __metaclass__ = PoolMeta
+class PurchaseLine(metaclass=PoolMeta):
     __name__ = 'purchase.line'
 
     @classmethod
