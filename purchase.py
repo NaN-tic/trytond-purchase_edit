@@ -3,6 +3,8 @@
 from trytond.pyson import Eval
 from trytond.pool import Pool, PoolMeta
 from trytond.model import fields
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['Purchase', 'PurchaseLine']
 
@@ -38,18 +40,6 @@ class Purchase(metaclass=PoolMeta):
         cls.lines.states['readonly'] = (_STATES_EDIT |
             Eval('shipment_state').in_(['sent', 'exception']))
         cls.lines.depends.append('shipment_state')
-
-        cls._error_messages.update({
-                'invalid_edit_fields_method': ('Can not edit field "%(field)s" '
-                    'of purchase "%(purchase)s" because purchase already '
-                    'invoiced.'),
-                'invalid_edit_fields_shipped': ('Can not edit field "%(field)s"'
-                    ' of purchase "%(purchase)s" because purchase already '
-                    'shipped.'),
-                'invalid_edit_move': ('Can not edit move "%s" '
-                        'that state is not draft.'),
-                'invalid_delete_line': ('Can not delete line "%s".'),
-                })
 
     def get_shipment_moves(self, name):
         '''
@@ -91,26 +81,30 @@ class Purchase(metaclass=PoolMeta):
                 for v in values:
                     if v in cls._check_modify_exclude:
                         if has_invoice_lines:
-                            cls.raise_user_error('invalid_edit_fields_method',
-                                {'field': v, 'purchase': purchase.rec_name})
+                            raise UserError(gettext(
+                                'purchase_edit.invalid_edit_fields_method',
+                                    field=v, purchase=purchase.rec_name))
                         if purchase.shipments or purchase.shipment_returns:
-                            cls.raise_user_error('invalid_edit_fields_shipped',
-                                {'field': v, 'purchase': purchase.rec_name})
+                            raise UserError(gettext(
+                                'purchase_edit.invalid_edit_fields_shipped',
+                                    field=v, purchase=purchase.rec_name))
 
                 if 'lines' in values:
                     cache_to_update.append(purchase)
 
                     for move in purchase.shipment_moves:
                         if move.state != 'draft':
-                            cls.raise_user_error('invalid_edit_move',
-                                (move.rec_name,))
+                            raise UserError(gettext(
+                                'purchase_edit.invalid_edit_move',
+                                    move=move.rec_name))
 
                     for v in values['lines']:
                         if 'create' == v[0]:
                             purchases_to_process.append(purchase)
                         if 'delete' == v[0]:
-                            cls.raise_user_error('invalid_delete_line',
-                                (purchase.rec_name,))
+                            raise UserError(gettext(
+                                'purchase_edit.invalid_delete_line',
+                                purchase=purchase.rec_name))
 
         super(Purchase, cls).write(*args)
 
@@ -161,14 +155,6 @@ class PurchaseLine(metaclass=PoolMeta):
         cls._check_readonly_fields = []
         cls._line2move = {'unit': 'uom'}
 
-        cls._error_messages.update({
-                'invalid_edit_move': ('Can not edit move "%s" '
-                    'that state is not draft.'),
-                'invalid_edit_multimove': ('Can not edit line "%s" '
-                    'that has more than one move.'),
-                'cannot_edit': ('Can not edit "%s" field.'),
-                })
-
     def check_line_to_update(self, fields):
         if (self.purchase and self.purchase.state == 'processing' and self.moves):
             # No check should be held if the only fields updated are
@@ -187,7 +173,8 @@ class PurchaseLine(metaclass=PoolMeta):
 
             moves = line.moves
             if len(moves) > 1:
-                cls.raise_user_error('invalid_edit_multimove', (line.rec_name))
+                raise UserError(gettext('purchase_edit.invalid_edit_multimove',
+                    line=line.rec_name))
             for move in moves:
                 if move.shipment:
                     shipments.add(move.shipment)
@@ -195,7 +182,9 @@ class PurchaseLine(metaclass=PoolMeta):
         for shipment in shipments:
             for move in shipment.moves:
                 if move.state != 'draft':
-                    cls.raise_user_error('invalid_edit_move', (move.rec_name,))
+                    raise UserError(gettext(
+                        'purchase_edit.invalid_edit_move',
+                        move=move.rec_name))
 
     @classmethod
     def write(cls, *args):
@@ -232,10 +221,11 @@ class PurchaseLine(metaclass=PoolMeta):
 
                 # check that not change type line
                 if 'type' in values and values['type'] != line.type:
-                    cls.raise_user_error('cannot_edit', 'type')
+                    raise UserError(gettext('purchase_edit.cannot_edit',
+                        field='type'))
                 if check_readonly_fields:
-                    cls.raise_user_error('cannot_edit',
-                        ', '.join(check_readonly_fields))
+                    raise UserError(gettext('purchase_edit.cannot_edit',
+                        fields=', '.join(check_readonly_fields)))
 
                 if len(line.moves) == 1:
                     # get first move because in validate we check that can not
