@@ -16,7 +16,7 @@ _STATES_EDIT_LINE = ~Eval('_parent_purchase', {}).get('state').in_(['draft'])
 
 class Purchase(metaclass=PoolMeta):
     __name__ = 'purchase.purchase'
-    shipment_moves = fields.Function(fields.One2Many('stock.move', None,
+    shipment_moves = fields.Function(fields.Many2Many('stock.move', None, None,
         'Moves'), 'get_shipment_moves')
 
     @classmethod
