@@ -160,7 +160,6 @@ Purchase 5 products::
     >>> purchase_line.quantity = 3.0
     >>> purchase.click('quote')
     >>> purchase.click('confirm')
-    >>> purchase.click('process')
     >>> purchase.state
     'processing'
     >>> len(purchase.moves), len(purchase.shipment_returns), len(purchase.invoices)
@@ -190,7 +189,6 @@ Purchase 5 products with an invoice method 'on shipment'::
     >>> purchase_line.quantity = 2.0
     >>> purchase.click('quote')
     >>> purchase.click('confirm')
-    >>> purchase.click('process')
     >>> len(purchase.moves), len(purchase.shipment_returns), len(purchase.invoices)
     (1, 0, 0)
 
@@ -240,7 +238,6 @@ Purchase 5 products with an invoice method 'manual'::
     >>> purchase_line.quantity = 2.0
     >>> purchase.click('quote')
     >>> purchase.click('confirm')
-    >>> purchase.click('process')
     >>> len(purchase.moves), len(purchase.shipment_returns), len(purchase.invoices)
     (1, 0, 0)
 
