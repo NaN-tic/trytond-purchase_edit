@@ -42,7 +42,6 @@ Create purchase user::
     >>> purchase_user = User()
     >>> purchase_user.name = 'Purchase'
     >>> purchase_user.login = 'purchase'
-    >>> purchase_user.main_company = company
     >>> purchase_group, = Group.find([('name', '=', 'Purchase')])
     >>> purchase_user.groups.append(purchase_group)
     >>> stock_group, = Group.find([('name', '=', 'Stock')])
@@ -54,7 +53,6 @@ Create stock user::
     >>> stock_user = User()
     >>> stock_user.name = 'Stock'
     >>> stock_user.login = 'stock'
-    >>> stock_user.main_company = company
     >>> stock_group, = Group.find([('name', '=', 'Stock')])
     >>> stock_user.groups.append(stock_group)
     >>> stock_user.save()
