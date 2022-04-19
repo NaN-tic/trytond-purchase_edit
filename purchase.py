@@ -159,7 +159,7 @@ class PurchaseLine(metaclass=PoolMeta):
         if (self.purchase and self.purchase.state == 'processing' and self.moves):
             # No check should be held if the only fields updated are
             # 'moves_recreated' or 'moves_ignored'
-            if set(fields) - {'moves_recreated', 'moves_ignored'}:
+            if set(fields) - {'moves_recreated', 'moves_ignored', 'actual_quantity'}:
                 return True
         return False
 
